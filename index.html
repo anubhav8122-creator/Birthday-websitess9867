@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>You Are My World, Ridhi ❤️</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Icon Library (Lucide) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Load Tone.js for Music Synthesis -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <!-- Modern Fonts: Playfair Display (Headings) and Montserrat (Body) -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom Tailwind Configuration for New Palette and Glows */
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-pink': '#ff9ecf', /* Main Pink */
+                        'light-pink': '#ffd3e8', /* Lighter Pink */
+                        'purple-tint': '#f7e9ff', /* Soft Purple Tint */
+                        'soft-cream': '#fff5fa', /* Soft Cream BG */
+                        'accent-gold': '#FFD700', /* Gold */
+                    },
+                    fontFamily: {
+                        'display': ['Playfair Display', 'serif'],
+                        'sans': ['Montserrat', 'sans-serif'], /* Montserrat for body */
+                    },
+                    boxShadow: {
+                        'neon-pink': '0 0 10px #ff9ecf, 0 0 20px #ff9ecf, 0 0 30px #ff9ecf, 0 0 40px #ff9ecf',
+                        'soft-glow': '0 10px 30px rgba(0, 0, 0, 0.1), 0 0 20px rgba(255, 215, 0, 0.2)',
+                    },
+                }
+            }
+        }
+
+        /* ------------------ CUSTOM ANIMATIONS & EFFECTS ------------------ */
+
+        /* 1. Base Gradient Background (for premium look) */
+        .premium-bg {
+            background: linear-gradient(135deg, var(--tw-colors-purple-tint), var(--tw-colors-soft-cream));
+            min-height: 100vh;
+        }
+
+        /* 2. Floating Hearts/Balloons Animation (ENHANCED with sway) */
+        @keyframes floatUp {
+            0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0.8; }
+            50% { transform: translateY(-60vh) translateX(10vw) rotate(180deg); opacity: 1; }
+            100% { transform: translateY(-120vh) translateX(-5vw) rotate(360deg); opacity: 0; }
+        }
+
+        .floating-element {
+            position: fixed;
+            animation: floatUp linear infinite;
+            z-index: 10;
+            pointer-events: none;
+            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8));
+        }
+
+        /* 3. Neon Glow Pulse for Text/Elements (INTENSIFIED) */
+        @keyframes neonPulse {
+            0%, 100% { text-shadow: 0 0 5px #fff, 0 0 10px #ff9ecf; }
+            50% { text-shadow: 0 0 8px #fff, 0 0 25px #ff9ecf, 0 0 40px #ff9ecf; }
+        }
+
+        .neon-text {
+            animation: neonPulse 2.5s ease-in-out infinite;
+        }
+
+        /* 4. Hero Card subtle continuous float */
+        @keyframes cardFloat {
+            0% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-5px) scale(1.005); }
+            100% { transform: translateY(0px) scale(1); }
+        }
+        .animate-card-float {
+            animation: cardFloat 5s ease-in-out infinite;
+        }
+
+        /* 5. Glass-Morphism Effect for Modal */
+        .glass-modal {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        /* 6. Parallax Effect */
+        .parallax-section {
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        /* 7. Sparkle Effect for Cursor */
+        .sparkle {
+            position: fixed;
+            width: 5px;
+            height: 5px;
+            background-color: #FFD700;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+            box-shadow: 0 0 5px #FFD700;
+        }
+        
+        /* 8. Confetti Animation */
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 50;
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            opacity: 0;
+            animation: fall 5s linear forwards;
+        }
+
+        /* 9. Jigsaw Puzzle Canvas Style */
+        #puzzleCanvas {
+            border: 6px solid #ff9ecf;
+            box-shadow: 0 0 15px rgba(255, 158, 207, 0.7);
+            border-radius: 12px;
+            touch-action: none; 
+            cursor: pointer;
+        }
+        #puzzle-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        /* 10. Slow Bounce Animation for Stickmen */
+        @keyframes bounceSlow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .animate-bounce-slow {
+            animation: bounceSlow 3s infinite ease-in-out;
+        }
+        
+        /* 11. New Flying Text Animation for Celebration */
+        @keyframes flyInAndOut {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, 150%) scale(0.1) rotate(-30deg);
+            }
+            10% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.5) rotate(5deg);
+            }
+            90% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.5) rotate(5deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -150%) scale(0.1) rotate(30deg);
+            }
+        }
+
+        .flying-text {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            z-index: 1000;
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            color: #FFD700;
+            text-shadow: 0 0 15px #ff9ecf, 0 0 30px #FFD700;
+            animation: flyInAndOut 4s forwards cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            line-height: 1;
+        }
+
+    </style>
+</head>
+
+<body class="premium-bg font-sans text-gray-800 antialiased relative overflow-x-hidden">
+
+    <!-- Background Music Placeholder -->
+    <audio id="backgroundMusic" loop>
+        <source src="placeholder_romantic_song.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- Floating Elements (Hearts and Balloons) Container -->
+    <div id="floating-elements-container"></div>
+    
+    <!-- Sparkles Container -->
+    <div id="sparkle-container"></div>
+    
+    <!-- Flying Text Container (Hidden initially) -->
+    <div id="flyingTextContainer"></div>
+
+    <!-- 2. Surprise Card Modal Popup (Glass-morphism) -->
+    <div id="surprise-modal" class="fixed inset-0 bg-black bg-opacity-40 z-50 hidden items-center justify-center p-4 transition-opacity duration-300" onclick="closeModal()">
+        <div class="glass-modal p-6 sm:p-10 rounded-3xl max-w-md w-full text-white transform transition-all duration-500 scale-90" onclick="event.stopPropagation()">
+            <h2 class="font-display text-4xl text-accent-gold mb-4 text-center neon-text">
+                Your Secret Card
+            </h2>
+            <p class="text-center text-light-pink mb-6">
+                Click the envelope to unveil a handwritten wish, my love.
+            </p>
+
+            <div id="the-card" class="relative bg-white/10 p-6 rounded-xl shadow-2xl transition duration-500 transform hover:scale-[1.03] overflow-hidden border border-white/20" onclick="revealCardContent()">
+                <div id="card-front" class="text-center transition-opacity duration-500">
+                    <span data-lucide="mail-open" class="w-16 h-16 mx-auto text-primary-pink fill-primary-pink mb-4" stroke-width="1.5"></span>
+                    <p class="font-display text-2xl drop-shadow-lg text-primary-pink">Open Me Now</p>
+                </div>
+                <div id="card-back" class="text-center text-white absolute inset-0 flex items-center justify-center p-8 bg-primary-pink/90 rounded-xl opacity-0 transition-opacity duration-500">
+                    <p class="text-xl font-display leading-relaxed">
+                        "Every moment spent with you is my favorite memory. Happy Birthday, my beautiful Ridhi. I love you more than words can say."
+                    </p>
+                </div>
+            </div>
+
+            <button onclick="closeModal()" class="mt-8 w-full py-3 bg-accent-gold text-gray-900 font-semibold rounded-full hover:bg-yellow-400 transition transform hover:-translate-y-0.5 shadow-soft-glow">
+                Close & Proceed
+            </button>
+        </div>
+    </div>
+
+    <!-- Confetti Container -->
+    <div id="confetti-container" class="confetti-container"></div>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <div class="max-w-5xl mx-auto">
+
+        <!-- HERO SECTION (Full Screen) -->
+        <header id="hero" class="h-screen flex flex-col items-center justify-center text-center relative overflow-hidden text-white parallax-section" style="background-image: url('https://placehold.co/1920x1080/ff9ecf/fff5fa?text=Ridhi+%26+Anubhav+Background'); background-color: #ff9ecf; background-blend-mode: multiply;">
+            <div class="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
+            <!-- Hero Card Element -->
+            <div class="relative p-6 sm:p-12 bg-white/10 rounded-3xl backdrop-blur-sm shadow-xl border border-white/20 transform translate-y-0 transition duration-1000 ease-out animate-card-float" style="max-width: 90%;" data-scroll="fade-in-up">
+                <h1 class="font-display text-7xl sm:text-9xl font-bold mb-4 drop-shadow-lg neon-text text-primary-pink" style="color: #fff5fa; font-weight: 700;">
+                    Ridhi
+                </h1>
+                <h2 class="font-display text-3xl sm:text-5xl font-semibold text-accent-gold mb-6 neon-text">
+                    Happiest Birthday, My Love!
+                </h2>
+                <!-- Typewriter text with new special message -->
+                <p id="typewriter-text" class="text-xl sm:text-2xl font-light text-soft-cream drop-shadow-md h-8 sm:h-10"></p>
+            </div>
+            <!-- Scroll Indicator -->
+            <div class="absolute bottom-10 animate-bounce">
+                <span data-lucide="chevron-down" class="w-8 h-8 text-soft-cream"></span>
+            </div>
+        </header>
+
+        <!-- HEARTFELT MESSAGE SECTION (Modern Card) -->
+        <section class="py-16 px-4" data-scroll="slide-in-left">
+            <div class="max-w-3xl mx-auto bg-white/90 p-8 sm:p-12 rounded-3xl shadow-soft-glow transition duration-700 transform hover:scale-[1.01] border-l-8 border-primary-pink">
+                <h3 class="text-center font-display text-4xl mb-8 text-primary-pink">
+                    A Heartfelt Letter To My Universe ✨
+                </h3>
+                <div class="text-gray-700 leading-relaxed space-y-6 text-lg">
+                    <p class="indent-8">
+                        My Dearest Ridhi, today is not just any day; it’s the day the world received one of its most incredible gifts: you. From the first moment, you walked into my life, everything became brighter, more vibrant, and infinitely more meaningful. You are the elegant strength in my life, the quiet laughter in the chaos, and the most comforting presence I could ever ask for. Every day with you feels like a page taken from a magical storybook—one filled with endless joy, profound love, and simple, beautiful moments that I cherish above all else.
+                    </p>
+                    <p class="indent-8">
+                        I often find myself gazing at you, completely captivated not just by your beauty, which is stunning, but by the sheer warmth and kindness that radiates from your soul. You inspire me to be a better man, to chase my dreams with more passion, and to appreciate the small miracles that life offers. Thank you for your patience, your unwavering support, and the way you look at me that makes me feel like I can conquer the world.
+                    </p>
+                    <p class="text-right mt-8 font-display text-2xl text-accent-gold">
+                        — Forever Yours, Anubhav
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- JIGSAW PUZZLE GAME SECTION -->
+        <section class="py-16 px-4 bg-purple-tint/50" data-scroll="fade-in">
+            <h3 class="text-center font-display text-4xl mb-6 text-gray-800">
+                Put Our Memory Back Together 🧩
+            </h3>
+            <p class="text-center text-gray-600 mb-8 max-w-xl mx-auto">
+                Click on two tiles to swap them until the picture is complete.
+            </p>
+            
+            <!-- SVG for Cake and Stickmen -->
+            <div class="flex justify-center items-end mt-4 mb-8 space-x-12 sm:space-x-16">
+                <!-- Stickman 1 (Dancing) -->
+                <svg width="60" height="80" viewBox="0 0 60 80" class="text-primary-pink animate-bounce-slow" style="animation-delay: 0.1s;">
+                    <circle cx="30" cy="10" r="10" fill="currentColor"/> <!-- Head -->
+                    <line x1="30" y1="20" x2="30" y2="50" stroke="currentColor" stroke-width="4" stroke-linecap="round"/> <!-- Body -->
+                    <line x1="30" y1="25" x2="10" y2="40" stroke="currentColor" stroke-width="4" stroke-linecap="round"/> <!-- Left Arm -->
+                    <line x1="30" y1="25" x2="50" y2="45" stroke="currentColor" stroke-width="4" stroke-linecap="round"/> <!-- Right Arm -->
+                    <line x1="30" y1="50" x2="20" y2="75" stroke="currentColor" stroke-width="4" stroke-linecap="round"/> <!-- Left Leg -->
+                    <line x1="30" y1="50" x2="40" y2="75" stroke="currentColor" stroke-width="4" stroke-linecap="round"/> <!-- Right Leg -->
+                </svg>
+
+                <!-- Birthday Cake -->
+                <svg width="120" height="90" viewBox="0 0 120 90" class="text-accent-gold scale-110">
+                    <!-- Cake Base -->
+                    <rect x="20" y="50" width="80" height="30" rx="5" fill="#ff9ecf"/>
+                    <rect x="25" y="40" width="70" height="15" rx="3" fill="#ffd3e8"/>
+                    <!-- Icing Drips -->
+                    <path d="M20 50 Q30 55 40 50 T60 50 T80 50 T100 50" fill="#ff9ecf"/>
+                    <!-- Candles (Flame is yellow) -->
+                    <rect x="35" y="25" width="4" height="15" fill="#ffd3e8"/>
+                    <circle cx="37" cy="24" r="2" fill="#FFD700"/>
+                    
+                    <rect x="55" y="20" width="4" height="20" fill="#ffd3e8"/>
+                    <circle cx="57" cy="19" r="2" fill="#FFD700"/>
+                    
+                    <rect x="75" y="25" width="4" height="15" fill="#ffd3e8"/>
+                    <circle cx="77" cy="24" r="2" fill="#FFD700"/>
+
+                    <!-- "Happy Bday" Text on Cake -->
+                    <text x="60" y="70" font-family="Montserrat, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">Happy Bday!</text>
+                </svg>
+
+                <!-- Stickman 2 (Waving) -->
+                <svg width="60" height="80" viewBox="0 0 60 80" class="text-accent-gold animate-bounce-slow" style="animation-delay: 0.5s;">
+                    <circle cx="30" cy="10" r="10" fill="currentColor"/> <!-- Head -->
+                    <line x1="30" y1="20" x2="30" y2="50" stroke="currentColor" stroke-width="4" stroke-linecap="round"/> <!-- Body -->
+                    <line x1="30" y1="25" x2="15" y2="35" stroke="currentColor" stroke-width="4" stroke-linecap="round"/> <!-- Left Arm (down) -->
+                    <line x1="30" y1="25" x2="50" y2="15" stroke="currentColor" stroke-width="4" stroke-linecap="round"/> <!-- Right Arm (waving up) -->
+                    <line x1="30" y1="50" x2="25" y2="75" stroke="currentColor" stroke-width="4" stroke-linecap="round"/> <!-- Left Leg -->
+                    <line x1="30" y1="50" x2="35" y2="75" stroke="currentColor" stroke-width="4" stroke-linecap="round"/> <!-- Right Leg -->
+                </svg>
+            </div>
+            
+            <div id="puzzle-container" class="max-w-xl mx-auto">
+                <canvas id="puzzleCanvas" width="450" height="450"></canvas>
+            </div>
+            <div class="flex justify-center mt-8 space-x-4">
+                <button id="shuffleButton" class="py-3 px-8 bg-primary-pink text-white font-medium rounded-full hover:bg-pink-500 transition shadow-md">
+                    Shuffle Puzzle
+                </button>
+                <!-- NEW CELEBRATE BUTTON -->
+                <button id="celebrateButton" onclick="celebrateBirthday()" class="py-3 px-8 bg-accent-gold text-gray-900 font-bold rounded-full hover:bg-yellow-400 transition shadow-lg transform hover:scale-105">
+                    🎉 Celebrate! 🎉
+                </button>
+            </div>
+            <div id="puzzleMessage" class="text-center text-2xl font-display text-accent-gold mt-6 hidden neon-text">
+                🎉 Puzzle Solved! You Win! 🎉
+            </div>
+        </section>
+
+        <!-- GLOWING BUTTON & SPECIAL MESSAGE SECTION -->
+        <section class="text-center py-16 px-4">
+            <div class="p-8 bg-purple-tint rounded-3xl shadow-soft-glow max-w-3xl mx-auto border-t-4 border-accent-gold" data-scroll="scale-in">
+                <h3 class="font-display text-3xl mb-8 text-gray-700">
+                    The Final Surprise Unlocks Here 🔑
+                </h3>
+                <!-- Glowing Premium Button -->
+                <button id="surprise-button" onclick="openSurpriseMessage()" class="glowing-button text-white font-semibold py-4 px-10 rounded-full text-xl shadow-lg transition duration-300 hover:scale-105"
+                        style="background: linear-gradient(90deg, #ff9ecf, #FFD700); box-shadow: 0 0 15px rgba(255, 215, 0, 0.8), 0 0 30px rgba(255, 158, 207, 0.5);">
+                    Tap For A Message & Tune!
+                </button>
+
+                <div id="special-message" class="mt-10 p-6 bg-light-pink rounded-xl hidden border-l-4 border-accent-gold transition-all duration-700 opacity-0 transform translate-y-8 shadow-inner">
+                    <p class="font-display text-3xl text-primary-pink mb-2">
+                        "You make my world brighter just by being in it. Happy Birthday Ridhi ❤️"
+                    </p>
+                    <p class="text-lg text-gray-700 mt-4">
+                        — Let's celebrate your beautiful life, now!
+                    </p>
+                </div>
+
+                <!-- Card Popup Button -->
+                <button onclick="openModal(); shootConfetti();" class="mt-8 py-3 px-8 bg-primary-pink text-white font-medium rounded-full hover:bg-pink-500 transition shadow-md transform hover:translate-x-1">
+                    Open Your Magical Birthday Card
+                </button>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="text-center py-6 bg-primary-pink text-white shadow-inner mt-12">
+        <p class="text-base font-light tracking-wider">
+            Made with ❤️ by Anubhav for Ridhi
+        </p>
+    </footer>
+
+
+    <script>
+        // --- 0. Global Setup & Utilities ---
+        const music = document.getElementById('backgroundMusic');
+        const typewriterTextElement = document.getElementById('typewriter-text');
+        const textToType = "You make my world brighter just by being in it. Happy Birthday Ridhi ❤️";
+        let charIndex = 0;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (music && music.paused) {
+                const startMusic = () => {
+                    music.volume = 0.4;
+                    music.play().catch(e => console.log("Music autoplay blocked:", e));
+                    document.removeEventListener('click', startMusic);
+                    document.removeEventListener('scroll', startMusic);
+                };
+                document.addEventListener('click', startMusic); 
+            }
+
+            typeWriter();
+            lucide.createIcons();
+            initScrollAnimations();
+            window.addEventListener('scroll', applyParallax);
+            document.addEventListener('mousemove', createSparkle);
+
+            for (let i = 0; i < 15; i++) {
+                createFloatingElement(true);
+            }
+
+            // Initialize Puzzle
+            initPuzzle();
+        });
+
+        // --- 1. Typewriter Effect ---
+        function typeWriter() {
+            if (charIndex < textToType.length) {
+                typewriterTextElement.textContent += textToType.charAt(charIndex);
+                charIndex++;
+                setTimeout(typeWriter, 60);
+            } else {
+                setTimeout(() => {
+                    typewriterTextElement.textContent = '';
+                    charIndex = 0;
+                    typeWriter();
+                }, 8000);
+            }
+        }
+
+        // --- 2. Floating Hearts and Balloons Animation ---
+        const elementContainer = document.getElementById('floating-elements-container');
+        const shapes = ['❤️', '💖', '✨', '🎈', '⭐', '💍'];
+
+        function createFloatingElement(isInitialBurst = false) {
+            const shape = shapes[Math.floor(Math.random() * shapes.length)];
+            const element = document.createElement('div');
+            element.classList.add('floating-element', 'text-4xl');
+            element.textContent = shape;
+
+            const startX = Math.random() * 100;
+            const size = Math.random() * 25 + 30;
+            const duration = Math.random() * 8 + 10;
+            const delay = isInitialBurst ? Math.random() * 3 : Math.random() * 8;
+
+            element.style.left = `${startX}vw`;
+            element.style.fontSize = `${size}px`;
+            element.style.animationDuration = `${duration}s`;
+            element.style.animationDelay = `${delay}s`;
+
+            elementContainer.appendChild(element);
+
+            setTimeout(() => {
+                element.remove();
+            }, (duration + delay) * 1000);
+        }
+        setInterval(createFloatingElement, 300);
+
+        // --- 3. Confetti Animation (Modified for intensity) ---
+        function shootConfetti(intensity = 1) {
+            const container = document.getElementById('confetti-container');
+            const confettiColors = ['#FFD700', '#ff9ecf', '#ffd3e8', '#f7e9ff', '#ffffff'];
+            const numConfetti = 150 * intensity;
+
+            for (let i = 0; i < numConfetti; i++) {
+                const piece = document.createElement('div');
+                piece.classList.add('confetti');
+
+                const size = Math.random() * 10 + 5;
+                piece.style.width = `${size}px`;
+                piece.style.height = `${size}px`;
+                piece.style.backgroundColor = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+                piece.style.left = `${Math.random() * 100}vw`;
+                piece.style.top = `${-10 - Math.random() * 50}vh`;
+
+                const duration = Math.random() * 4 + 3;
+                const delay = Math.random() * 1;
+                piece.style.animationDuration = `${duration}s`;
+                piece.style.animationDelay = `${delay}s`;
+
+                if (Math.random() > 0.5) {
+                    piece.style.borderRadius = '50%';
+                }
+                
+                container.appendChild(piece);
+
+                setTimeout(() => {
+                    piece.remove();
+                }, (duration + delay) * 1000);
+            }
+        }
+
+        // --- 4. Surprise Card Modal Logic (Glass-morphism) ---
+        const modal = document.getElementById('surprise-modal');
+        const cardBack = document.getElementById('card-back');
+        const cardFront = document.getElementById('card-front');
+
+        function openModal() {
+            modal.classList.remove('hidden', 'opacity-0');
+            modal.classList.add('flex', 'opacity-100');
+            modal.querySelector('.glass-modal').classList.remove('scale-90');
+        }
+
+        function closeModal() {
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            modal.querySelector('.glass-modal').classList.add('scale-90');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                cardBack.classList.add('opacity-0');
+                cardFront.classList.remove('opacity-0');
+                cardFront.style.display = 'block';
+                cardBack.style.display = 'none';
+            }, 300);
+        }
+
+        function revealCardContent() {
+            if (cardBack.classList.contains('opacity-0')) {
+                cardFront.classList.add('opacity-0');
+                setTimeout(() => {
+                    cardFront.style.display = 'none';
+                    cardBack.style.display = 'flex';
+                    setTimeout(() => {
+                        cardBack.classList.remove('opacity-0');
+                    }, 50);
+                }, 500);
+            }
+        }
+
+        // --- 5. JIGSAW PUZZLE LOGIC (CLICK-TO-SWAP FIX) ---
+        const canvas = document.getElementById('puzzleCanvas');
+        const ctx = canvas.getContext('2d');
+        const tileCount = 3; // 3x3 puzzle
+        let image = new Image();
+        let tiles = [];
+        let pieceSize = canvas.width / tileCount;
+        let firstClickTile = null;
+        let isSolved = false;
+
+        function initPuzzle() {
+            image.onload = () => {
+                pieceSize = canvas.width / tileCount;
+                createTiles();
+                shuffleTiles();
+                drawPuzzle();
+                
+                canvas.addEventListener('click', clickTile);
+
+                document.getElementById('shuffleButton').addEventListener('click', () => {
+                    shuffleTiles();
+                    drawPuzzle();
+                    firstClickTile = null; // Reset selection on shuffle
+                    document.getElementById('puzzleMessage').classList.add('hidden');
+                    isSolved = false;
+                });
+            };
+            image.src = "https://placehold.co/450x450/ff9ecf/fff5fa?text=Ridhi+%27s+Memory"; 
+        }
+
+        function createTiles() {
+            tiles = [];
+            for (let i = 0; i < tileCount * tileCount; i++) {
+                tiles.push({
+                    originalIndex: i, // The correct position in the final image
+                    currentPosition: i, // The current position on the grid
+                });
+            }
+        }
+
+        function shuffleTiles() {
+            for (let i = tiles.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                // Only swap the current position index
+                [tiles[i].currentPosition, tiles[j].currentPosition] = [tiles[j].currentPosition, tiles[i].currentPosition];
+            }
+        }
+
+        function drawPuzzle(highlightedTile = null) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            tiles.forEach(tile => {
+                const sourceX = (tile.originalIndex % tileCount) * pieceSize;
+                const sourceY = Math.floor(tile.originalIndex / tileCount) * pieceSize;
+
+                const drawX = (tile.currentPosition % tileCount) * pieceSize;
+                const drawY = Math.floor(tile.currentPosition / tileCount) * pieceSize;
+                
+                // Draw the cropped image piece
+                ctx.drawImage(
+                    image, 
+                    sourceX, sourceY, pieceSize, pieceSize, 
+                    drawX, drawY, pieceSize, pieceSize
+                );
+
+                // Draw border for visual separation
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(drawX, drawY, pieceSize, pieceSize);
+                
+                ctx.strokeStyle = '#ff9ecf';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(drawX, drawY, pieceSize, pieceSize);
+
+                // Draw Highlight (NEW for click-to-swap)
+                if (highlightedTile && highlightedTile.currentPosition === tile.currentPosition) {
+                    ctx.fillStyle = 'rgba(255, 215, 0, 0.4)'; // Gold highlight
+                    ctx.fillRect(drawX, drawY, pieceSize, pieceSize);
+                }
+            });
+        }
+
+        function getTile(x, y) {
+            const col = Math.floor(x / pieceSize);
+            const row = Math.floor(y / pieceSize);
+            const index = row * tileCount + col;
+            return tiles.find(tile => tile.currentPosition === index);
+        }
+
+        function getEventPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.clientX || e.touches?.[0]?.clientX;
+            const clientY = e.clientY || e.touches?.[0]?.clientY;
+            
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top
+            };
+        }
+
+        function clickTile(e) {
+            e.preventDefault();
+            if (isSolved) return;
+            const pos = getEventPos(e);
+            const clickedTile = getTile(pos.x, pos.y);
+
+            if (!clickedTile) return;
+
+            if (!firstClickTile) {
+                // First click: Select the tile and highlight it
+                firstClickTile = clickedTile;
+                drawPuzzle(firstClickTile);
+            } else if (firstClickTile === clickedTile) {
+                // Double click on same tile: Deselect
+                firstClickTile = null;
+                drawPuzzle();
+            } else {
+                // Second click: Swap and check win condition
+                const tempPos = firstClickTile.currentPosition;
+                firstClickTile.currentPosition = clickedTile.currentPosition;
+                clickedTile.currentPosition = tempPos;
+
+                firstClickTile = null; // Reset selection
+                drawPuzzle();
+                checkWin();
+            }
+        }
+
+        function checkWin() {
+            isSolved = tiles.every(tile => tile.originalIndex === tile.currentPosition);
+            if (isSolved) {
+                document.getElementById('puzzleMessage').classList.remove('hidden');
+                shootConfetti(1);
+            }
+        }
+
+        // --- 6. HAPPY BIRTHDAY TUNE LOGIC ---
+        const synth = new Tone.Synth().toDestination();
+        const noiseSynth = new Tone.NoiseSynth({
+            noise: { type: 'pink' },
+            envelope: { attack: 0.005, decay: 0.1, sustain: 0, release: 0.1 }
+        }).toDestination(); // For the 'pop' effect
+
+        function playBirthdaySong() {
+            const notes = [
+                'C4', 'C4', 'D4', 'C4', 'F4', 'E4', 
+                'C4', 'C4', 'D4', 'C4', 'G4', 'F4', 
+                'C4', 'C4', 'C5', 'A4', 'F4', 'E4', 'D4', 
+                'A#4', 'A#4', 'A4', 'F4', 'G4', 'F4'
+            ];
+            
+            const durations = [
+                '8n', '8n', '4n', '4n', '4n', '2n',
+                '8n', '8n', '4n', '4n', '4n', '2n',
+                '8n', '8n', '4n', '4n', '8n', '8n', '4n',
+                '8n', '8n', '4n', '4n', '4n', '2n'
+            ];
+            
+            let time = Tone.now();
+            const delay = 0.5;
+
+            Tone.start().then(() => {
+                notes.forEach((note, index) => {
+                    synth.triggerAttackRelease(note, durations[index], time + delay);
+                    time += Tone.Time(durations[index]).toSeconds(); 
+                });
+            });
+        }
+
+
+        // --- 7. Glowing Button & Special Message Reveal ---
+        const specialMessage = document.getElementById('special-message');
+
+        function openSurpriseMessage() {
+            const button = document.getElementById('surprise-button');
+
+            if (specialMessage.classList.contains('hidden')) {
+                specialMessage.classList.remove('hidden');
+                setTimeout(() => {
+                    specialMessage.classList.remove('opacity-0', 'translate-y-8');
+                    button.textContent = 'Hide Message & Tune';
+                }, 10);
+                
+                playBirthdaySong();
+                shootConfetti(1);
+            } else {
+                specialMessage.classList.add('opacity-0', 'translate-y-8');
+                setTimeout(() => {
+                    specialMessage.classList.add('hidden');
+                    button.textContent = 'Tap For A Message & Tune!';
+                }, 700);
+            }
+        }
+
+        // --- 8. NEW: Celebration Logic (Party Popper + Flying Text) ---
+        function celebrateBirthday() {
+            // 1. Party Popper Sound
+            Tone.start().then(() => {
+                // Play a quick, high-pitched noise burst
+                noiseSynth.triggerAttackRelease("16n");
+            });
+
+            // 2. Intense Confetti Burst (3x intensity)
+            shootConfetti(3);
+            
+            // 3. Flying Text Animation
+            const container = document.getElementById('flyingTextContainer');
+            const textElement = document.createElement('div');
+            
+            textElement.classList.add('flying-text', 'text-4xl', 'sm:text-7xl', 'font-extrabold', 'px-6', 'py-3', 'rounded-xl', 'bg-black/70', 'glass-modal');
+            textElement.innerHTML = 'RIDHI just turned <span class="text-primary-pink">16</span> WOWWWWW';
+            
+            container.appendChild(textElement);
+            
+            // Remove the text element after the animation duration (4s)
+            setTimeout(() => {
+                textElement.remove();
+            }, 4000); 
+        }
+        
+        // --- 9. Parallax Effect on Hero ---
+        const hero = document.getElementById('hero');
+
+        function applyParallax() {
+            const scrollPosition = window.pageYOffset;
+            hero.style.backgroundPositionY = `calc(50% + ${scrollPosition * 0.2}px)`;
+        }
+
+        // --- 10. Soft Sparkles on Mouse Movement ---
+        const sparkleContainer = document.getElementById('sparkle-container');
+        let sparkleCounter = 0;
+
+        function createSparkle(e) {
+            if (window.innerWidth < 768) return; 
+
+            sparkleCounter++;
+            if (sparkleCounter % 3 !== 0) return;
+
+            const sparkle = document.createElement('div');
+            sparkle.classList.add('sparkle');
+            sparkle.style.left = `${e.clientX}px`;
+            sparkle.style.top = `${e.clientY}px`;
+            
+            const size = Math.random() * 3 + 4;
+            sparkle.style.width = `${size}px`;
+            sparkle.style.height = `${size}px`;
+            sparkle.style.backgroundColor = Math.random() > 0.5 ? '#FFD700' : '#ff9ecf';
+
+            sparkleContainer.appendChild(sparkle);
+
+            setTimeout(() => {
+                sparkle.style.opacity = '1';
+                sparkle.style.transform = `translate(${Math.random() * 30 - 15}px, ${Math.random() * 30 - 15}px)`;
+            }, 5);
+
+            setTimeout(() => {
+                sparkle.style.opacity = '0';
+                sparkle.style.transform = 'scale(0.5)';
+                setTimeout(() => sparkle.remove(), 500);
+            }, 300);
+        }
+        
+        // --- 11. Scroll Reveal Animations ---
+        function initScrollAnimations() {
+            const elements = document.querySelectorAll('[data-scroll]');
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const effect = entry.target.getAttribute('data-scroll');
+                        entry.target.classList.add('animate-in');
+                        
+                        entry.target.style.transition = 'none';
+                        entry.target.style.opacity = '0';
+                        if (effect === 'slide-in-left') entry.target.style.transform = 'translateX(-100px)';
+                        if (effect === 'slide-in-right') entry.target.style.transform = 'translateX(100px)';
+                        if (effect === 'scale-in') entry.target.style.transform = 'scale(0.8)';
+
+                        void entry.target.offsetHeight; 
+                        
+                        entry.target.style.transition = 'opacity 0.8s ease-out, transform 0.8s ease-out';
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translate(0) scale(1)';
+
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                rootMargin: '0px',
+                threshold: 0.1
+            });
+
+            elements.forEach(element => {
+                observer.observe(element);
+            });
+        }
+    </script>
+</body>
+</html>
